@@ -1,5 +1,5 @@
 package org.example
 
 fun main() {
-    println("Hello World!")
+    val problem = TSPReader.read("/kroA100.tsp")
 }
