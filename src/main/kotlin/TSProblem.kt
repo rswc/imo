@@ -2,12 +2,13 @@ package org.example
 
 import kotlin.math.roundToInt
 
-class TSProblem(points: List<List<Int>>) {
+class TSProblem(val points: List<List<Int>>) {
 
-    var distanceMatrix: Array<IntArray>
+    val distanceMatrix: Array<IntArray>
+    val dimension: Int
 
     init {
-        val dimension = points.size
+        dimension = points.size
         distanceMatrix = Array(dimension) {i ->
             IntArray(dimension) {j ->
                 points[i]
