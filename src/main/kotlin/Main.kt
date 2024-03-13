@@ -6,5 +6,7 @@ fun main() {
     val problem = TSPReader.read("/kroA100.tsp")
     val sol = NearestNeighborSolver().solve(problem)
 
+    println("Score: ${sol.score()}")
+
     File("solution.dot").writeText(TSPVisualizer().generateDot(problem, sol))
 }
