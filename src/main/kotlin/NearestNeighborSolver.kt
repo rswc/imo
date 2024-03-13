@@ -10,32 +10,36 @@ class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
         val path = listOf(mutableListOf<Int>(), mutableListOf())
         val freeVertices = (0..<instance.dimension).toMutableList()
 
-        val lastAdded = mutableListOf(
-            freeVertices.removeAt(rng.nextInt(freeVertices.size)),
-            -1,
-        )
-        path[0].add(lastAdded[0])
+        path[0].add(freeVertices.removeAt(rng.nextInt(freeVertices.size)))
 
         // Start second cycle from the furthest free node
-        lastAdded[1] = instance.distanceMatrix[lastAdded[0]].withIndex().maxBy { it.value }.index
-        path[1].add(lastAdded[1])
-        freeVertices.remove(lastAdded[1])
+        val furthestNode = instance.distanceMatrix[path[0].first()].withIndex().maxBy { it.value }.index
+        path[1].add(furthestNode)
+        freeVertices.remove(furthestNode)
 
         var phase = 0
         do {
-            var bestIndex = 0
-            var bestDistance = Int.MAX_VALUE
+            var bestIndex = Pair(0, 0)
+            var bestDistanceDelta = Int.MAX_VALUE
 
-            for (i in freeVertices.indices) {
-                val d = instance.distanceMatrix[freeVertices[i]][lastAdded[phase]]
-                if (d < bestDistance) {
-                    bestIndex = i
-                    bestDistance = d
+            for (j in path[phase].indices) {
+                val currentToNext = instance.distanceMatrix[path[phase][j]]
+                    .elementAtOrNull(path[phase].elementAtOrElse(j + 1) { Int.MAX_VALUE }) ?: 0
+
+                for (i in freeVertices.indices) {
+                    val candidateToNext = instance.distanceMatrix[freeVertices[i]]
+                        .elementAtOrNull(path[phase].elementAtOrElse(j + 1) { Int.MAX_VALUE }) ?: 0
+                    val currentToCandidate = instance.distanceMatrix[freeVertices[i]][path[phase][j]]
+
+                    val delta = currentToCandidate + candidateToNext - currentToNext
+                    if (delta < bestDistanceDelta) {
+                        bestIndex = Pair(i, j + 1)
+                        bestDistanceDelta = delta
+                    }
                 }
             }
 
-            lastAdded[phase] = freeVertices.removeAt(bestIndex)
-            path[phase].add(lastAdded[phase])
+            path[phase].add(bestIndex.second, freeVertices.removeAt(bestIndex.first))
 
             phase = phase xor 1
 
