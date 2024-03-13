@@ -10,7 +10,7 @@ class TSPVisualizer {
     private var scale = 10.0
 
     fun generateDot(problem: TSProblem, solution: TSPSolution, scale: Double = 10.0): String {
-        val result = StringBuilder("digraph G {")
+        val result = StringBuilder("digraph G {\n")
         var i = 0
         
         minCoords = problem.points
@@ -32,13 +32,20 @@ class TSPVisualizer {
             |""".trimMargin())
         }
 
-        for (pair in solution.cycle.zipWithNext()) {
-            result.append("n${pair.first} -> n${pair.second};\n")
-        }
+        printCycle(result, solution.cycleA)
+        printCycle(result, solution.cycleB, color = "red")
 
-        result.append("n${solution.cycle.last()} -> n${solution.cycle.first()};\n}")
+        result.append("}")
 
         return result.toString()
+    }
+
+    private fun printCycle(result: StringBuilder, cycle: List<Int>, color: String = "black") {
+        for (pair in cycle.zipWithNext()) {
+            result.append("n${pair.first} -> n${pair.second} [color=\"$color\"];\n")
+        }
+
+        result.append("n${cycle.last()} -> n${cycle.first()} [color=\"$color\"];\n")
     }
 
     private fun getPos(coordinates: List<Int>): String {

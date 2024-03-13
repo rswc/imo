@@ -2,5 +2,6 @@ package org.example
 
 data class TSPSolution(
     val instance: TSProblem,
-    val cycle: MutableList<Int>
+    val cycleA: MutableList<Int>,
+    val cycleB: MutableList<Int>
 ) : ISolution
