@@ -1,18 +1,11 @@
 package org.example
 
-import kotlin.math.pow
 import kotlin.random.Random
 
 class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
 
     private val rng = Random(seed)
     private lateinit var inst: TSProblem
-
-    private fun getDistance(a: Int, b: Int): Double {
-        return inst.points[a]
-            .zip(inst.points[b])
-            .fold(0.0) { acc, pair -> acc + (pair.first - pair.second).toDouble().pow(2.0) }
-    }
 
     override fun solve(instance: TSProblem): TSPSolution {
         inst = instance
@@ -24,10 +17,10 @@ class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
 
         do {
             var bestIndex = 0
-            var bestDistance = Double.MAX_VALUE
+            var bestDistance = Int.MAX_VALUE
 
             for (i in freeVertices.indices) {
-                val d = getDistance(freeVertices[i], lastAdded)
+                val d = inst.distanceMatrix[freeVertices[i]][lastAdded]
                 if (d < bestDistance) {
                     bestIndex = i
                     bestDistance = d
