@@ -25,6 +25,7 @@ class TSPVisualizer {
             assert(coords.size == 2)
 
             result.append("""|n${i} [
+                |   color = "${if (solution.cycleA[0] == i || solution.cycleB[0] == i) "blue" else "black"}"
                 |   label = ${i++}
                 |   pos = "${getPos(coords)}!"
                 |]

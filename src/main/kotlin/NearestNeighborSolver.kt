@@ -12,10 +12,14 @@ class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
 
         val lastAdded = mutableListOf(
             freeVertices.removeAt(rng.nextInt(freeVertices.size)),
-            freeVertices.removeAt(rng.nextInt(freeVertices.size)),
+            -1,
         )
         path[0].add(lastAdded[0])
+
+        // Start second cycle from the furthest free node
+        lastAdded[1] = instance.distanceMatrix[lastAdded[0]].withIndex().maxBy { it.value }.index
         path[1].add(lastAdded[1])
+        freeVertices.remove(lastAdded[1])
 
         var phase = 0
         do {
