@@ -3,7 +3,7 @@ package org.example
 import java.io.File
 
 fun main() {
-    val problem = TSPReader.read("/kroA100.tsp")
+    val problem = TSPReader.read("/kroA20.tsp")
     val sol = NearestNeighborSolver().solve(problem)
 
     println("Score: ${sol.score()}")
