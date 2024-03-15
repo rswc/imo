@@ -3,8 +3,8 @@ package org.example
 import java.io.File
 
 fun main() {
-    val problem = TSPReader.read("/kroA20.tsp")
-    val sol = NearestNeighborSolver().solve(problem)
+    val problem = TSPReader.read("/kroB100.tsp")
+    val sol = NearestNeighborSolver(greedyCycle = true).solve(problem)
 
     println("Score: ${sol.score()}")
 

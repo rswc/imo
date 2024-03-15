@@ -2,7 +2,7 @@ package org.example
 
 import kotlin.random.Random
 
-class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
+class NearestNeighborSolver(val greedyCycle: Boolean = false, seed: Long = 42) : ISolver<TSProblem> {
 
     private val rng = Random(seed)
 
@@ -24,11 +24,13 @@ class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
 
             for (j in path[phase].indices) {
                 val currentToNext = instance.distanceMatrix[path[phase][j]]
-                    .elementAtOrNull(path[phase].elementAtOrElse(j + 1) { Int.MAX_VALUE }) ?: 0
+                    .elementAtOrNull(path[phase].elementAtOrElse(j + 1) { Int.MAX_VALUE }) ?:
+                    distFallback(instance, path[phase], path[phase].last())
 
                 for (i in freeVertices.indices) {
                     val candidateToNext = instance.distanceMatrix[freeVertices[i]]
-                        .elementAtOrNull(path[phase].elementAtOrElse(j + 1) { Int.MAX_VALUE }) ?: 0
+                        .elementAtOrNull(path[phase].elementAtOrElse(j + 1) { Int.MAX_VALUE }) ?:
+                        distFallback(instance, path[phase], freeVertices[i])
                     val currentToCandidate = instance.distanceMatrix[freeVertices[i]][path[phase][j]]
 
                     val delta = currentToCandidate + candidateToNext - currentToNext
@@ -46,6 +48,14 @@ class NearestNeighborSolver(seed: Long = 42) : ISolver<TSProblem> {
         } while (freeVertices.size > 0)
 
         return TSPSolution(instance, path[0], path[1])
+    }
+
+    private fun distFallback(instance: TSProblem, path: List<Int>, origin: Int): Int {
+        if (greedyCycle) {
+            return instance.distanceMatrix[path.first()][origin]
+        }
+
+        return 0
     }
 
 }
