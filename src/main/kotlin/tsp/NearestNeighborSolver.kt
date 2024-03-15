@@ -1,5 +1,6 @@
-package org.example
+package org.example.tsp
 
+import org.example.core.ISolver
 import kotlin.random.Random
 
 class NearestNeighborSolver(val greedyCycle: Boolean = false, seed: Long = 42) : ISolver<TSProblem> {

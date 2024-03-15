@@ -1,4 +1,6 @@
-package org.example
+package org.example.tsp
+
+import org.example.core.ISolution
 
 data class TSPSolution(
     val instance: TSProblem,

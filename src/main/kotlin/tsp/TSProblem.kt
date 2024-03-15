@@ -1,4 +1,4 @@
-package org.example
+package org.example.tsp
 
 import kotlin.math.pow
 import kotlin.math.roundToInt

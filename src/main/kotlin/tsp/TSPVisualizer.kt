@@ -1,4 +1,4 @@
-package org.example
+package org.example.tsp
 
 import kotlin.math.max
 import kotlin.math.min

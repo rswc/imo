@@ -1,5 +1,8 @@
 package org.example
 
+import org.example.tsp.NearestNeighborSolver
+import org.example.tsp.TSPReader
+import org.example.tsp.TSPVisualizer
 import java.io.File
 
 fun main() {
