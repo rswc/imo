@@ -1,6 +1,8 @@
 package org.example.core
 
-class Experiment<PROBLEM>(
+import java.io.File
+
+class Experiment<PROBLEM : IInstance>(
     val solvers: List<ISolver<PROBLEM>>,
     val instances: List<PROBLEM>
 ) {

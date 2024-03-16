@@ -1,10 +1,11 @@
 package org.example.tsp
 
+import org.example.core.IInstance
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class TSProblem(val points: List<List<Int>>) {
+class TSProblem(val points: List<List<Int>>, override val name: String) : IInstance {
 
     val distanceMatrix: Array<IntArray>
     val dimension: Int = points.size
