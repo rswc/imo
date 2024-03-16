@@ -10,6 +10,6 @@ fun main() {
         listOf(TSPReader.read("/kroA100.tsp"), TSPReader.read("/kroB100.tsp"))
     )
 
-    experiment.run(10)
+    experiment.run(100)
     experiment.saveLatex("tspResult.txt")
 }

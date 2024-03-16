@@ -12,8 +12,8 @@ class Experiment<PROBLEM : IInstance>(
     fun run(steps: Int) {
         solvers.forEach { solver ->
             instances.forEach { instance ->
-                (0..steps).forEach { step ->
-                    val solution = solver.solve(instance)
+                (0..<steps).forEach { step ->
+                    val solution = solver.solve(instance, experimentStep = step)
 
                     results[solver]!!.getValue(instance).update(solution)
                 }

@@ -1,5 +1,6 @@
 package org.example.tsp
 
+import org.example.core.ISolution
 import org.example.core.ISolver
 import kotlin.random.Random
 
@@ -7,11 +8,11 @@ class NearestNeighborSolver(val greedyCycle: Boolean = false, seed: Long = 42) :
 
     private val rng = Random(seed)
 
-    override fun solve(instance: TSProblem): TSPSolution {
+    override fun solve(instance: TSProblem, experimentStep: Int?): ISolution {
         val path = listOf(mutableListOf<Int>(), mutableListOf())
         val freeVertices = (0..<instance.dimension).toMutableList()
 
-        path[0].add(freeVertices.removeAt(rng.nextInt(freeVertices.size)))
+        path[0].add(freeVertices.removeAt(experimentStep ?: rng.nextInt(freeVertices.size)))
 
         // Start second cycle from the furthest free node
         val furthestNode = instance.distanceMatrix[path[0].first()].withIndex().maxBy { it.value }.index
