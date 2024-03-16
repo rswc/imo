@@ -1,15 +1,15 @@
 package org.example
 
+import org.example.core.Experiment
 import org.example.tsp.NearestNeighborSolver
 import org.example.tsp.TSPReader
-import org.example.tsp.TSPVisualizer
-import java.io.File
 
 fun main() {
-    val problem = TSPReader.read("/kroB100.tsp")
-    val sol = NearestNeighborSolver(greedyCycle = true).solve(problem)
+    val experiment = Experiment(
+        listOf(NearestNeighborSolver(), NearestNeighborSolver(greedyCycle = true)),
+        listOf(TSPReader.read("/kroA100.tsp"), TSPReader.read("/kroB100.tsp"))
+    )
 
-    println("Score: ${sol.score()}")
-
-    File("solution.dot").writeText(TSPVisualizer().generateDot(problem, sol))
+    experiment.run(10)
+    experiment.saveLatex("tspResult.txt")
 }

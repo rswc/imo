@@ -7,7 +7,7 @@ class Experiment<PROBLEM : IInstance>(
     val instances: List<PROBLEM>
 ) {
 
-    val results = solvers.associateWith { mutableMapOf<PROBLEM, ScoreMetric>().withDefault { ScoreMetric() } }
+    val results = solvers.associateWith { instances.associateWithTo(mutableMapOf()) { ScoreMetric() } }
 
     fun run(steps: Int) {
         solvers.forEach { solver ->
@@ -19,6 +19,31 @@ class Experiment<PROBLEM : IInstance>(
                 }
             }
         }
+    }
+
+    fun saveLatex(path: String, precision: Int = 2) {
+        val table = StringBuilder("\\begin{center}\n\\begin{tabular}{|c|")
+        instances.forEach { table.append("c|") }
+        table.append("}\n\\hline\n ")
+        instances.forEach { table.append("& ${it.name} ") }
+        table.append("\\\\\n")
+
+        fun Double.format(scale: Int) = "%.${scale}f".format(this)
+
+        solvers.forEach { solver ->
+            table.append("\\hline\n${solver.getDisplayName()} ")
+
+            instances.forEach { instance ->
+                val metrics = results[solver]!!.getValue(instance)
+                table.append("& ${metrics.mean.format(precision)} (${metrics.minScore.format(precision)}--${metrics.maxScore.format(precision)}) ")
+            }
+
+            table.append("\\\\\n")
+        }
+
+        table.append("\\hline\n\\end{tabular}\n\\end{center}")
+
+        File(path).writeText(table.toString())
     }
 
 }

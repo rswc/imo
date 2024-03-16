@@ -5,6 +5,7 @@ build/
 !**/src/test/**/build/
 
 solution.dot
+tspResult.txt
 
 ### IntelliJ IDEA ###
 .idea/workspace.xml
