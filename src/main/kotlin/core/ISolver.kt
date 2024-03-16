@@ -4,4 +4,6 @@ interface ISolver<PROBLEM : IInstance> {
 
     fun solve(instance: PROBLEM) : ISolution
 
+    fun getDisplayName(): String
+
 }

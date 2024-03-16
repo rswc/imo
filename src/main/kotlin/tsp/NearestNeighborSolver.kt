@@ -59,4 +59,8 @@ class NearestNeighborSolver(val greedyCycle: Boolean = false, seed: Long = 42) :
         return 0
     }
 
+    override fun getDisplayName(): String {
+        return if (greedyCycle) "Greedy Cycle" else "Nearest Neighbor"
+    }
+
 }
