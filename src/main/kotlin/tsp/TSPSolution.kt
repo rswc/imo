@@ -12,7 +12,7 @@ data class TSPSolution(
         return cycle
             .zipWithNext()
             .fold(0.0) {acc, pair -> acc + instance.distanceMatrix[pair.first][pair.second]} +
-                instance.distanceMatrix[cycleA.first()][cycleA.last()]
+                instance.distanceMatrix[cycle.first()][cycle.last()]
     }
 
     override fun score(): Double {
