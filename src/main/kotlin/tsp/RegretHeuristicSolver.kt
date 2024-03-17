@@ -3,7 +3,7 @@ package org.example.tsp
 import org.example.core.ISolver
 import kotlin.random.Random
 
-class RegretHeuristicSolver(seed: Long = 42) : ISolver<TSProblem> {
+class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) : ISolver<TSProblem> {
 
     private val rng = Random(seed)
 
@@ -93,7 +93,7 @@ class RegretHeuristicSolver(seed: Long = 42) : ISolver<TSProblem> {
         val regret = distances.mapIndexed { index, dist ->
             val sortedDist = dist.sorted()
             val twoRegret = sortedDist[1] - sortedDist[0]
-            Pair(vertices[index], twoRegret)
+            Pair(vertices[index], twoRegret - weight * sortedDist[0])
         }
         //println(regret)
 
