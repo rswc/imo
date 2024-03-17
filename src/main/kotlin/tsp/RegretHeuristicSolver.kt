@@ -8,15 +8,6 @@ class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) :
     private val rng = Random(seed)
 
     override fun solve(instance: TSProblem, experimentStep: Int?): TSPSolution {
-
-        //for (row in instance.distanceMatrix) {
-           // for (element in row) {
-            //    print("$element    ")
-            //}
-           // println()
-        //}
-
-
         val freeVertices = MutableList(instance.dimension) { 1 }
         val startVerA = rng.nextInt(0, freeVertices.size)
         val startVerB = instance.distanceMatrix.indices.maxByOrNull { instance.distanceMatrix[it][startVerA] }!!
@@ -24,38 +15,28 @@ class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) :
         freeVertices[startVerA] = 0
         freeVertices[startVerB] = 0
 
-        var cycleA = initCycle(startVerA, instance.distanceMatrix, freeVertices.toMutableList())
-        var cycleB = initCycle(startVerB, instance.distanceMatrix, freeVertices.toMutableList())
-        //println(cycleA.toList())
-        //println(cycleB.toList())
+        var cycleA = initCycle(startVerA, instance.distanceMatrix, freeVertices)
+        var cycleB = initCycle(startVerB, instance.distanceMatrix, freeVertices)
 
         freeVertices[cycleA[1]] = 0
         freeVertices[cycleB[1]] = 0
-        //println(cycleA.toList())
-        //println(freeVertices)
-        while (freeVertices.sum() > 0) {
 
+        while (freeVertices.sum() > 0) {
             cycleA = extendCycle(cycleA, instance.distanceMatrix, freeVertices)
-            //println(cycleA.toList())
-            //println(freeVertices)
-            if (freeVertices.sum() > 0){
+
+            if (freeVertices.sum() > 0) {
                 cycleB = extendCycle(cycleB, instance.distanceMatrix, freeVertices)
-                //println(cycleB.toList())
-            //println(freeVertices)
             }
         }
+
         cycleA.removeAt(cycleA.size - 1)
         cycleB.removeAt(cycleB.size - 1)
 
-
-        println(cycleA.toList())
-        println(cycleB.toList())
-        println(freeVertices)
         return TSPSolution(instance, cycleA.toMutableList(), cycleB.toMutableList())
     }
 
     private fun initCycle(index: Int, matrix: Array<IntArray>, freeVertices: MutableList<Int>): MutableList<Int> {
-        val row = matrix.map { it[index] }
+        val row = matrix[index]
         var minLength = Int.MAX_VALUE
         var bestVertex: Int? = null
 
@@ -65,7 +46,7 @@ class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) :
                 bestVertex = vertex
             }
         }
-        //println(minLength)
+
         bestVertex?.let {
             freeVertices[it] = 0
             return mutableListOf(index, it, index)
@@ -87,28 +68,14 @@ class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) :
                 distanceDiff(matrix, cycle, cycleVertex, freeVertex)
             })
         }
-        //println("X")
-        //println(vertices)
-        //println(distances)
+
         val regret = distances.mapIndexed { index, dist ->
             val sortedDist = dist.sorted()
             val twoRegret = sortedDist[1] - sortedDist[0]
             Pair(vertices[index], twoRegret - weight * sortedDist[0])
         }
-        //println(regret)
 
-        val allZeroRegret = regret.all { it.second == 0 }
-
-        return if (allZeroRegret) {
-            // Zwróć wierzchołek o minimalnej odległości
-            val minDistanceVertex = vertices.minByOrNull { vertex ->
-                distances[vertices.indexOf(vertex)].minOrNull() ?: Int.MAX_VALUE
-            }
-            minDistanceVertex ?: throw IllegalStateException("No vertex found.")
-        } else {
-            // Zwróć wierzchołek o największym regret
-            regret.maxByOrNull { it.second }?.first ?: throw IllegalStateException("No vertex found.")
-        }
+        return regret.maxByOrNull { it.second }?.first ?: throw IllegalStateException("No vertex found.")
     }
 
     private fun extendCycle(cycle: MutableList<Int>, matrix: Array<IntArray>, freeVertices: MutableList<Int>): MutableList<Int> {

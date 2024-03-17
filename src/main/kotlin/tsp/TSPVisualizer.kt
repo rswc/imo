@@ -26,11 +26,13 @@ class TSPVisualizer {
 
             result.append("""|n${i} [
                 |   color = "${if (solution.cycleA[0] == i || solution.cycleB[0] == i) "blue" else "black"}"
-                |   label = ${i++}
+                |   label = ${i}
                 |   pos = "${getPos(coords)}!"
                 |]
                 |
             |""".trimMargin())
+
+            i++
         }
 
         printCycle(result, solution.cycleA)
