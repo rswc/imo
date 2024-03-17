@@ -9,7 +9,8 @@ class TSPVisualizer {
     private var coordsSpan: List<Double> = listOf()
     private var scale = 10.0
 
-    fun generateDot(problem: TSProblem, solution: TSPSolution, scale: Double = 10.0): String {
+    fun generateDot(solution: TSPSolution, scale: Double = 10.0): String {
+        val problem = solution.instance
         val result = StringBuilder("digraph G {\n")
         var i = 0
         
