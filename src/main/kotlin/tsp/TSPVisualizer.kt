@@ -9,7 +9,8 @@ class TSPVisualizer {
     private var coordsSpan: List<Double> = listOf()
     private var scale = 10.0
 
-    fun generateDot(problem: TSProblem, solution: TSPSolution, scale: Double = 10.0): String {
+    fun generateDot(solution: TSPSolution, scale: Double = 10.0): String {
+        val problem = solution.instance
         val result = StringBuilder("digraph G {\n")
         var i = 0
         
@@ -26,11 +27,13 @@ class TSPVisualizer {
 
             result.append("""|n${i} [
                 |   color = "${if (solution.cycleA[0] == i || solution.cycleB[0] == i) "blue" else "black"}"
-                |   label = ${i++}
+                |   label = ${i}
                 |   pos = "${getPos(coords)}!"
                 |]
                 |
             |""".trimMargin())
+
+            i++
         }
 
         printCycle(result, solution.cycleA)

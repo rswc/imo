@@ -1,8 +1,5 @@
 package org.example.core
 
-import kotlin.math.max
-import kotlin.math.min
-
 class ScoreMetric {
 
     private var sum = 0.0
@@ -18,12 +15,24 @@ class ScoreMetric {
             return sum / count
         }
 
+    var minSolution: ISolution? = null
+        private set
+
+    var maxSolution: ISolution? = null
+        private set
+
     fun update(solution: ISolution) {
         val score = solution.score()
 
         sum += score
-        minScore = min(minScore, score)
-        maxScore = max(maxScore, score)
+        if (score < minScore) {
+            minScore = score
+            minSolution = solution
+        }
+        if (score > maxScore) {
+            maxScore = score
+            maxSolution = solution
+        }
         count++
     }
 

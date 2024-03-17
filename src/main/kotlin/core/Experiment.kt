@@ -1,5 +1,7 @@
 package org.example.core
 
+import org.example.tsp.TSPSolution
+import org.example.tsp.TSPVisualizer
 import java.io.File
 
 class Experiment<PROBLEM : IInstance>(
@@ -44,6 +46,17 @@ class Experiment<PROBLEM : IInstance>(
         table.append("\\hline\n\\end{tabular}\n\\end{center}")
 
         File(path).writeText(table.toString())
+    }
+
+    fun saveBestSolutions(visualizer: TSPVisualizer) {
+        solvers.forEach { solver ->
+            instances.forEach { instance ->
+                val metrics = results[solver]!!.getValue(instance)
+
+                File("sol_${solver.getDisplayName()}_${instance.name}.dot")
+                    .writeText(visualizer.generateDot(metrics.minSolution as TSPSolution))
+            }
+        }
     }
 
 }
