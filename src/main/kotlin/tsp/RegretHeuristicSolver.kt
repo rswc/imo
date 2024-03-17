@@ -1,13 +1,13 @@
-package org.example
+package org.example.tsp
 
+import org.example.core.ISolver
 import kotlin.random.Random
 
 class RegretHeuristicSolver(seed: Long = 42) : ISolver<TSProblem> {
 
     private val rng = Random(seed)
 
-
-    override fun solve(instance: TSProblem): TSPSolution {
+    override fun solve(instance: TSProblem, experimentStep: Int?): TSPSolution {
 
         //for (row in instance.distanceMatrix) {
            // for (element in row) {
@@ -51,7 +51,7 @@ class RegretHeuristicSolver(seed: Long = 42) : ISolver<TSProblem> {
         println(cycleA.toList())
         println(cycleB.toList())
         println(freeVertices)
-        return TSPSolution(instance, cycleA.toList(), cycleB.toList())
+        return TSPSolution(instance, cycleA.toMutableList(), cycleB.toMutableList())
     }
 
     private fun initCycle(index: Int, matrix: Array<IntArray>, freeVertices: MutableList<Int>): MutableList<Int> {
@@ -119,5 +119,9 @@ class RegretHeuristicSolver(seed: Long = 42) : ISolver<TSProblem> {
         cycle.add(bestInsertion, bestVertex)
 
         return cycle
+    }
+
+    override fun getDisplayName(): String {
+        return "Regret Heuristic"
     }
 }
