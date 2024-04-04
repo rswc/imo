@@ -9,7 +9,7 @@ class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) :
 
     override fun solve(instance: TSProblem, experimentStep: Int?): TSPSolution {
         val freeVertices = MutableList(instance.dimension) { 1 }
-        val startVerA = rng.nextInt(0, freeVertices.size)
+        val startVerA = experimentStep ?: rng.nextInt(0, freeVertices.size)
         val startVerB = instance.distanceMatrix.indices.maxByOrNull { instance.distanceMatrix[it][startVerA] }!!
 
         freeVertices[startVerA] = 0
