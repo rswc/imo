@@ -4,7 +4,7 @@ import org.example.core.ISolver
 import org.example.tsp.TSPSolution
 import org.example.tsp.TSProblem
 
-class LocalSearch(private val presolver: ISolver<TSProblem>, private val swapEdges: Boolean = false): ISolver<TSProblem> {
+class SteepLocalSearch(private val presolver: ISolver<TSProblem>, private val swapEdges: Boolean = false): ISolver<TSProblem> {
     override fun solve(instance: TSProblem, experimentStep: Int?): TSPSolution {
         val dm = instance.distanceMatrix
         val initialSolution = presolver.solve(instance) as TSPSolution
@@ -14,11 +14,9 @@ class LocalSearch(private val presolver: ISolver<TSProblem>, private val swapEdg
         val endNodes = startNodes.toMutableList()
 
         do {
-            var delta: Int
-            var swapped = false
-
-            startNodes.shuffle()
-            endNodes.shuffle()
+            var bestDelta = 0
+            var bestStart = startNodes[0]
+            var bestEnd = startNodes[0]
 
             for (start in startNodes) {
                 for (end in endNodes) {
@@ -39,30 +37,15 @@ class LocalSearch(private val presolver: ISolver<TSProblem>, private val swapEdg
                             continue
                         }
 
-                        delta = dm[startPrev][endNode] +
+                        val delta = dm[startPrev][endNode] +
                                 dm[startNode][endNext] -
                                 dm[startPrev][startNode] -
                                 dm[endNode][endNext]
 
-                        if (delta < 0) {
-                            var n = end.first - start.first + 1
-
-                            if (n < 0) {
-                                n += instance.dimension
-                            }
-
-                            n /= 2
-
-                            val c = start.second
-
-                            for (i in 0 until n) {
-                                val left = (start.first + i).mod(cycles[c].size)
-                                val right = (end.first - i).mod(cycles[c].size)
-
-                                cycles[c][left] = cycles[c][right].also { cycles[c][right] = cycles[c][left] }
-                            }
-
-                            swapped = true
+                        if (delta < bestDelta) {
+                            bestDelta = delta
+                            bestStart = start
+                            bestEnd = end
                         }
 
                     } else {
@@ -76,7 +59,7 @@ class LocalSearch(private val presolver: ISolver<TSProblem>, private val swapEdg
                         val endNode = cycles[end.second][end.first]
                         val endNext = cycles[end.second][(end.first + 1).mod(cycles[end.second].size)]
 
-                        delta = dm[startNode][endPrev] +
+                        var delta = dm[startNode][endPrev] +
                                 dm[startNode][endNext] +
                                 dm[endNode][startPrev] +
                                 dm[endNode][startNext] -
@@ -93,15 +76,42 @@ class LocalSearch(private val presolver: ISolver<TSProblem>, private val swapEdg
                             delta += dm[endNode][endPrev] + dm[endNode][startNode]
                         }
 
-                        if (delta < 0) {
-                            cycles[start.second][start.first] = cycles[end.second][end.first]
-                                .also { cycles[end.second][end.first] = cycles[start.second][start.first] }
-                            swapped = true
+                        if (delta < bestDelta) {
+                            bestDelta = delta
+                            bestStart = start
+                            bestEnd = end
                         }
                     }
                 }
             }
-        } while (swapped)
+
+            if (bestDelta < 0) {
+                if (swapEdges && bestStart.second == bestEnd.second) {
+                    var n = bestEnd.first - bestStart.first + 1
+
+                    if (n < 0) {
+                        n += instance.dimension
+                    }
+
+                    n /= 2
+
+                    val c = bestStart.second
+
+                    for (i in 0 until n) {
+                        val left = (bestStart.first + i).mod(cycles[c].size)
+                        val right = (bestEnd.first - i).mod(cycles[c].size)
+
+                        cycles[c][left] = cycles[c][right].also { cycles[c][right] = cycles[c][left] }
+                    }
+
+                } else {
+                    cycles[bestStart.second][bestStart.first] = cycles[bestEnd.second][bestEnd.first]
+                        .also { cycles[bestEnd.second][bestEnd.first] = cycles[bestStart.second][bestStart.first] }
+
+                }
+            }
+
+        } while (bestDelta < 0)
 
         return TSPSolution(instance, cycles[0], cycles[1])
     }
