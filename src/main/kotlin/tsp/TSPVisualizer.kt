@@ -13,7 +13,7 @@ class TSPVisualizer {
         val problem = solution.instance
         val result = StringBuilder("digraph G {\n")
         var i = 0
-        
+
         minCoords = problem.points
             .reduce { acc, point -> listOf(min(acc[0], point[0]), min(acc[1], point[1])) }
             .map { it.toDouble() }
@@ -27,8 +27,10 @@ class TSPVisualizer {
 
             result.append("""|n${i} [
                 |   color = "${if (solution.cycleA[0] == i || solution.cycleB[0] == i) "blue" else "black"}"
-                |   label = ${i}
                 |   pos = "${getPos(coords)}!"
+                |   style = "filled"
+                |   fillcolor = "${if (i in solution.cycleA) "black" else "red"}"
+                |   label = ${i}
                 |]
                 |
             |""".trimMargin())
@@ -47,6 +49,7 @@ class TSPVisualizer {
     private fun printCycle(result: StringBuilder, cycle: List<Int>, color: String = "black") {
         for (pair in cycle.zipWithNext()) {
             result.append("n${pair.first} -> n${pair.second} [color=\"$color\"];\n")
+
         }
 
         result.append("n${cycle.last()} -> n${cycle.first()} [color=\"$color\"];\n")

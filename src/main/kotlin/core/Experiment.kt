@@ -3,6 +3,7 @@ package org.example.core
 import org.example.tsp.TSPSolution
 import org.example.tsp.TSPVisualizer
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 class Experiment<PROBLEM : IInstance>(
     val solvers: List<ISolver<PROBLEM>>,
@@ -14,14 +15,32 @@ class Experiment<PROBLEM : IInstance>(
     fun run(steps: Int) {
         solvers.forEach { solver ->
             instances.forEach { instance ->
-                (0..<steps).forEach { step ->
-                    val solution = solver.solve(instance, experimentStep = step)
+                    var minTime = 1000.00
+                    var maxTime = 0.00
+                    var sumTime = 0.00
+                    (0 until steps).forEach { step ->
+                        val timeElapsed = measureTimeMillis {
+                        val solution = solver.solve(instance, experimentStep = step)
+                        results[solver]!!.getValue(instance).update(solution)
+                    }
+                        sumTime += timeElapsed
+                        if (timeElapsed < minTime) {
+                            minTime = timeElapsed.toDouble()
+                        }
+                        if (timeElapsed > maxTime) {
+                            maxTime = timeElapsed.toDouble()
+                        }
 
-                    results[solver]!!.getValue(instance).update(solution)
-                }
+                        }
+                val avgTime = sumTime / steps.toDouble()
+                println("Solver ${solver.getDisplayName()} on instance ${instance.name} took: $avgTime ($minTime - $maxTime) ms")
+                    }
+
+
             }
         }
-    }
+
+
 
     fun saveLatex(path: String, precision: Int = 2) {
         val table = StringBuilder("\\begin{center}\n\\begin{tabular}{|c|")
