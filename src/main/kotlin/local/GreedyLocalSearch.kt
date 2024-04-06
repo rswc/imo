@@ -20,8 +20,11 @@ class GreedyLocalSearch(private val presolver: ISolver<TSProblem>, private val s
             startNodes.shuffle()
             endNodes.shuffle()
 
-            for (start in startNodes) {
-                for (end in endNodes) {
+            for (iS in startNodes.indices) {
+                for (iE in endNodes.indices) {
+                    val start = startNodes[iS]
+                    val end = endNodes[iE]
+
                     if (swapEdges && start.second == end.second) {
                         // intracycle edge swap
 
@@ -96,6 +99,10 @@ class GreedyLocalSearch(private val presolver: ISolver<TSProblem>, private val s
                         if (delta < 0) {
                             cycles[start.second][start.first] = cycles[end.second][end.first]
                                 .also { cycles[end.second][end.first] = cycles[start.second][start.first] }
+
+                            startNodes[iS] = Pair(start.first, end.second)
+                            endNodes[iE] = Pair(end.first, start.second)
+
                             swapped = true
                         }
                     }

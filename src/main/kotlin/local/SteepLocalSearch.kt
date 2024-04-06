@@ -17,9 +17,14 @@ class SteepLocalSearch(private val presolver: ISolver<TSProblem>, private val sw
             var bestDelta = 0
             var bestStart = startNodes[0]
             var bestEnd = startNodes[0]
+            var bestIS = 0
+            var bestIE = 0
 
-            for (start in startNodes) {
-                for (end in endNodes) {
+            for (iS in startNodes.indices) {
+                for (iE in endNodes.indices) {
+                    val start = startNodes[iS]
+                    val end = endNodes[iE]
+
                     if (swapEdges && start.second == end.second) {
                         // intracycle edge swap
 
@@ -46,6 +51,8 @@ class SteepLocalSearch(private val presolver: ISolver<TSProblem>, private val sw
                             bestDelta = delta
                             bestStart = start
                             bestEnd = end
+                            bestIS = iS
+                            bestIE = iE
                         }
 
                     } else {
@@ -80,6 +87,8 @@ class SteepLocalSearch(private val presolver: ISolver<TSProblem>, private val sw
                             bestDelta = delta
                             bestStart = start
                             bestEnd = end
+                            bestIS = iS
+                            bestIE = iE
                         }
                     }
                 }
@@ -108,6 +117,8 @@ class SteepLocalSearch(private val presolver: ISolver<TSProblem>, private val sw
                     cycles[bestStart.second][bestStart.first] = cycles[bestEnd.second][bestEnd.first]
                         .also { cycles[bestEnd.second][bestEnd.first] = cycles[bestStart.second][bestStart.first] }
 
+                    startNodes[bestIS] = Pair(bestStart.first, bestEnd.second)
+                    endNodes[bestIE] = Pair(bestEnd.first, bestStart.second)
                 }
             }
 
