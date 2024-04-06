@@ -128,7 +128,7 @@ class SteepLocalSearch(private val presolver: ISolver<TSProblem>, private val sw
     }
 
     override fun getDisplayName(): String {
-        return "Local Search"
+        return "Steep & ${presolver.getDisplayName()} & ${if (swapEdges) "Edge" else "Vertex"}"
     }
 
 }

@@ -114,7 +114,7 @@ class GreedyLocalSearch(private val presolver: ISolver<TSProblem>, private val s
     }
 
     override fun getDisplayName(): String {
-        return "Local Search"
+        return "Greedy & ${presolver.getDisplayName()} & ${if (swapEdges) "Edge" else "Vertex"}"
     }
 
 }
