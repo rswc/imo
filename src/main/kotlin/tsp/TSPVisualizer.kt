@@ -30,7 +30,8 @@ class TSPVisualizer {
                 |   pos = "${getPos(coords)}!"
                 |   style = "filled"
                 |   fillcolor = "${if (i in solution.cycleA) "black" else "red"}"
-                |   label = ${i}
+                |   label = ""
+                |   shape = "circle"
                 |]
                 |
             |""".trimMargin())
@@ -48,11 +49,11 @@ class TSPVisualizer {
 
     private fun printCycle(result: StringBuilder, cycle: List<Int>, color: String = "black") {
         for (pair in cycle.zipWithNext()) {
-            result.append("n${pair.first} -> n${pair.second} [color=\"$color\"];\n")
+            result.append("n${pair.first} -> n${pair.second} [color=\"$color\", penwidth=4];\n")
 
         }
 
-        result.append("n${cycle.last()} -> n${cycle.first()} [color=\"$color\"];\n")
+        result.append("n${cycle.last()} -> n${cycle.first()} [color=\"$color\", penwidth=4];\n")
     }
 
     private fun getPos(coordinates: List<Int>): String {
