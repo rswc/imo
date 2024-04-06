@@ -72,7 +72,9 @@ class Experiment<PROBLEM : IInstance>(
             instances.forEach { instance ->
                 val metrics = results[solver]!!.getValue(instance)
 
-                File("sol_${solver.getDisplayName()}_${instance.name}.dot")
+                val filename = solver.getDisplayName().replace("[^a-zA-Z _-]".toRegex(), "")
+
+                File("sol_${filename}_${instance.name}.dot")
                     .writeText(visualizer.generateDot(metrics.minSolution as TSPSolution))
             }
         }

@@ -89,6 +89,6 @@ class RegretHeuristicSolver(private val weight: Double = 0.4, seed: Long = 42) :
     }
 
     override fun getDisplayName(): String {
-        return "Regret Heuristic"
+        return "Regret Heuristic ($\\lambda=$weight$)"
     }
 }
