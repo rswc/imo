@@ -10,7 +10,7 @@ class BaselineLocalSearch(private val presolver: ISolver<TSProblem>, private val
         val targetTime = System.currentTimeMillis() + timeLimit
         val dm = instance.distanceMatrix
         val initialSolution = presolver.solve(instance) as TSPSolution
-        val cycles = listOf(initialSolution.cycleA, initialSolution.cycleB)
+        val cycles = listOf(initialSolution.cycleA.toMutableList(), initialSolution.cycleB.toMutableList())
 
         val nodeToCycle = MutableList(instance.dimension) { 0 }
         for (node in cycles[1]) {
@@ -25,15 +25,19 @@ class BaselineLocalSearch(private val presolver: ISolver<TSProblem>, private val
 
         do {
             var delta: Int
-            val start = nodes.random()
-            val end = nodes.random()
+
+            val iS = nodes.indices.random()
+            val iE = nodes.indices.random()
+
+            if (iS == iE) {
+                continue
+            }
+
+            val start = nodes[iS]
+            val end = nodes[iE]
 
             val cycleStart = start.second
             val cycleEnd = end.second
-
-            if (start == end) {
-                continue
-            }
 
             if (cycleStart == cycleEnd && (0..1).random() == 1) {
                 // intracycle edge swap
@@ -99,7 +103,8 @@ class BaselineLocalSearch(private val presolver: ISolver<TSProblem>, private val
                 cycles[cycleStart][start.first] = cycles[cycleEnd][end.first]
                     .also { cycles[cycleEnd][end.first] = cycles[cycleStart][start.first] }
 
-                nodeToCycle[start.first] = cycleEnd.also { nodeToCycle[end.first] = cycleStart }
+                nodes[iS] = Pair(start.first, end.second)
+                nodes[iE] = Pair(end.first, start.second)
             }
 
             currentScore += delta
