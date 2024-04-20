@@ -30,7 +30,7 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                 if (startCycle == endCycle) {
                     // Intracycle edge swap
 
-                    val move = EdgeMove(dm, startCycle, cycles[startCycle], startIndex, endIndex)
+                    val move = EdgeMove(dm, cycles[startCycle], startIndex, endIndex, instance.dimension)
 
                     if (move.delta < 0) {
                         LM.add(move)
@@ -39,7 +39,7 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                 } else {
                     // Intercycle vertex swap
 
-                    val move = VertexMove(dm, startCycle, cycles[startCycle], cycles[endCycle], startCycle, endCycle)
+                    val move = VertexMove(dm, cycles[startCycle], cycles[endCycle], startIndex, endIndex)
 
                     if (move.delta < 0) {
                         LM.add(move)
@@ -57,7 +57,10 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
             when (move.checkValidity()) {
                 Move.Validity.BROKEN -> LM.removeAt(i)
                 Move.Validity.INVERTED -> {}
-                Move.Validity.VALID -> TODO("Execute")
+                Move.Validity.VALID -> {
+                    move.execute()
+                    break
+                }
             }
         }
 

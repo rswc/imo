@@ -2,17 +2,19 @@ package org.example.local
 
 class EdgeMove(
     dm: Array<IntArray>,
-    val cycleIndex: Int,
     private val cycle: MutableList<Int>,
     startIndex: Int,
     endIndex: Int,
+    private val dimension: Int
 ) : Move() {
 
     val startPrev: Int = cycle.prevOf(startIndex)
     val startNode: Int = cycle[startIndex]
+    private var startIndex: Int = -1
 
     val endNode: Int = cycle[endIndex]
     val endNext: Int = cycle.nextOf(endIndex)
+    private var endIndex: Int = -1
 
     override val delta: Int = if (endNext == startNode) {
         Int.MAX_VALUE
@@ -26,7 +28,7 @@ class EdgeMove(
     }
 
     override fun checkValidity(): Validity {
-        val startIndex = cycle.indexOf(startNode)
+        startIndex = cycle.indexOf(startNode)
 
         if (startIndex < 0) {
             return Validity.BROKEN
@@ -38,7 +40,7 @@ class EdgeMove(
             return Validity.BROKEN
         }
 
-        val endIndex = cycle.indexOf(endNode)
+        endIndex = cycle.indexOf(endNode)
 
         if (endIndex < 0) {
             return Validity.BROKEN
@@ -55,6 +57,24 @@ class EdgeMove(
         }
 
         return Validity.VALID
+    }
+
+    override fun execute() {
+        // WARNING: this assumes the move has been validated this round!
+        var n = endIndex - startIndex + 1
+
+        if (n < 0) {
+            n += dimension
+        }
+
+        n /= 2
+
+        for (i in 0 until n) {
+            val left = (startIndex + i).mod(cycle.size)
+            val right = (endIndex - i).mod(cycle.size)
+
+            cycle[left] = cycle[right].also { cycle[right] = cycle[left] }
+        }
     }
 
     private fun startDir(startIndex: Int, startPrev: Int, cycle: MutableList<Int>): Validity {
