@@ -48,9 +48,23 @@ class VertexMove (
             return Validity.BROKEN
         }
 
+        if (!(
+                (cycleStart.prevOf(startIndex) == startPrev && cycleStart.nextOf(startIndex) == startNext)
+                || (cycleStart.nextOf(startIndex) == startPrev && cycleStart.prevOf(startIndex) == startNext)
+            )) {
+            return Validity.BROKEN
+        }
+
         endIndex = cycleEnd.indexOf(endNode)
 
         if (endIndex < 0) {
+            return Validity.BROKEN
+        }
+
+        if (!(
+                (cycleEnd.prevOf(endIndex) == endPrev && cycleEnd.nextOf(endIndex) == endNext)
+                || (cycleEnd.nextOf(endIndex) == endPrev && cycleEnd.prevOf(endIndex) == endNext)
+            )) {
             return Validity.BROKEN
         }
 
@@ -61,6 +75,14 @@ class VertexMove (
         // WARNING: this assumes the move has been validated this round!
         cycleStart[startIndex] = cycleEnd[endIndex]
             .also { cycleEnd[endIndex] = cycleStart[startIndex] }
+    }
+
+    override fun getSignature(): Pair<Long, Long> {
+        return Pair((startNode.toLong() shl 32) + startPrev.toLong(), (endNode.toLong() shl 32) + endNext.toLong())
+    }
+
+    override fun toString(): String {
+        return "VertexMove(start = $startNode, end = $endNode, delta = $delta)"
     }
 
 }

@@ -12,6 +12,7 @@ class EdgeMove(
 
     private var startIndex: Int = -1
     private var endIndex: Int = -1
+    var dir: Int = 1
 
     override val delta: Int = if (endNext == startNode) {
         Int.MAX_VALUE
@@ -55,7 +56,7 @@ class EdgeMove(
 
         endIndex = cycle.indexOf(endNode)
 
-        if (endIndex < 0) {
+        if (endIndex < 0 || endIndex == startIndex) {
             return Validity.BROKEN
         }
 
@@ -83,14 +84,19 @@ class EdgeMove(
         n /= 2
 
         for (i in 0 until n) {
-            val left = (startIndex + i).mod(cycle.size)
-            val right = (endIndex - i).mod(cycle.size)
+            val left = (startIndex + i + dir).mod(cycle.size)
+            val right = (endIndex - i - dir).mod(cycle.size)
 
             cycle[left] = cycle[right].also { cycle[right] = cycle[left] }
         }
     }
 
+    override fun getSignature(): Pair<Long, Long> {
+        return Pair((startNode.toLong() shl 32) + startPrev.toLong(), (endNode.toLong() shl 32) + endNext.toLong())
+    }
+
     fun inverted(dm: Array<IntArray>, si: Int, ei: Int): EdgeMove {
+        //TODO: how ?????
         return EdgeMove(
             dm,
             dimension,
@@ -104,8 +110,10 @@ class EdgeMove(
 
     private fun startDir(startIndex: Int, startPrev: Int, cycle: MutableList<Int>): Validity {
         if (cycle.prevOf(startIndex) == startPrev) {
+            dir = 0
             return Validity.VALID
         } else if (cycle.nextOf(startIndex) == startPrev) {
+            dir = 1
             return Validity.INVERTED
         }
 
@@ -120,6 +128,11 @@ class EdgeMove(
         }
 
         return Validity.BROKEN
+    }
+
+
+    override fun toString(): String {
+        return "EdgeMove(start = $startNode, end = $endNode, delta = $delta)"
     }
 
 }
