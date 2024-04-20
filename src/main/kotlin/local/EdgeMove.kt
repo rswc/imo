@@ -2,18 +2,15 @@ package org.example.local
 
 class EdgeMove(
     dm: Array<IntArray>,
+    private val dimension: Int,
     private val cycle: MutableList<Int>,
-    startIndex: Int,
-    endIndex: Int,
-    private val dimension: Int
+    val startPrev: Int,
+    val startNode: Int,
+    val endNode: Int,
+    val endNext: Int,
 ) : Move() {
 
-    val startPrev: Int = cycle.prevOf(startIndex)
-    val startNode: Int = cycle[startIndex]
     private var startIndex: Int = -1
-
-    val endNode: Int = cycle[endIndex]
-    val endNext: Int = cycle.nextOf(endIndex)
     private var endIndex: Int = -1
 
     override val delta: Int = if (endNext == startNode) {
@@ -21,11 +18,27 @@ class EdgeMove(
 
     } else {
         dm[startPrev][endNode] +
-                dm[startNode][endNext] -
-                dm[startPrev][startNode] -
-                dm[endNode][endNext]
+        dm[startNode][endNext] -
+        dm[startPrev][startNode] -
+        dm[endNode][endNext]
 
     }
+
+    constructor(
+        dm: Array<IntArray>,
+        cycle: MutableList<Int>,
+        startIndex: Int,
+        endIndex: Int,
+        dimension: Int
+    ) : this(
+        dm,
+        dimension,
+        cycle,
+        cycle.prevOf(startIndex),
+        cycle[startIndex],
+        cycle[endIndex],
+        cycle.nextOf(endIndex),
+    )
 
     override fun checkValidity(): Validity {
         startIndex = cycle.indexOf(startNode)
@@ -75,6 +88,18 @@ class EdgeMove(
 
             cycle[left] = cycle[right].also { cycle[right] = cycle[left] }
         }
+    }
+
+    fun inverted(dm: Array<IntArray>, si: Int, ei: Int): EdgeMove {
+        return EdgeMove(
+            dm,
+            dimension,
+            cycle,
+            cycle.nextOf(si),
+            cycle[si],
+            cycle[ei],
+            cycle.prevOf(ei),
+        )
     }
 
     private fun startDir(startIndex: Int, startPrev: Int, cycle: MutableList<Int>): Validity {

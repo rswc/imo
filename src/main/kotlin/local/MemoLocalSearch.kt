@@ -36,6 +36,12 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                         LM.add(move)
                     }
 
+                    val invertedMove = move.inverted(dm, startIndex, endIndex)
+
+                    if (invertedMove.delta < 0) {
+                        LM.add(invertedMove)
+                    }
+
                 } else {
                     // Intercycle vertex swap
 
