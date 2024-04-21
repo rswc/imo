@@ -1,4 +1,7 @@
-package org.example.local
+package org.example.local.moves
+
+import org.example.local.nextOf
+import org.example.local.prevOf
 
 class VertexMove (
     dm: Array<IntArray>,

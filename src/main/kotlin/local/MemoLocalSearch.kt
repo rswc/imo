@@ -1,6 +1,9 @@
 package org.example.local
 
 import org.example.core.ISolver
+import org.example.local.moves.EdgeMove
+import org.example.local.moves.Move
+import org.example.local.moves.VertexMove
 import org.example.tsp.TSPSolution
 import org.example.tsp.TSProblem
 

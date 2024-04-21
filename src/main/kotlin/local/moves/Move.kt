@@ -1,4 +1,4 @@
-package org.example.local
+package org.example.local.moves
 
 abstract class Move: Comparable<Move> {
 

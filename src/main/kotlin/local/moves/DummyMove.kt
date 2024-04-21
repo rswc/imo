@@ -1,4 +1,6 @@
-package org.example.local
+package org.example.local.moves
+
+import org.example.local.moves.Move
 
 class DummyMove: Move() {
 
