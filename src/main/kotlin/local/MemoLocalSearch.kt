@@ -3,6 +3,7 @@ package org.example.local
 import org.example.core.ISolver
 import org.example.tsp.TSPSolution
 import org.example.tsp.TSProblem
+
 class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProblem> {
 
     override fun solve(instance: TSProblem, experimentStep: Int?): TSPSolution {
@@ -18,14 +19,15 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
         do {
             // Cycle through new moves and add to LM if they improve the score
             for (start in 0 until instance.dimension) {
+                val startCycle = (start >= firstCycleSize).compareTo(false)
+                val startIndex = start - firstCycleSize * startCycle
+
                 for (end in 0 until instance.dimension) {
                     if (start == end) {
                         continue
                     }
 
-                    val startCycle = (start >= firstCycleSize).compareTo(false)
                     val endCycle = (end >= firstCycleSize).compareTo(false)
-                    val startIndex = start - firstCycleSize * startCycle
                     val endIndex = end - firstCycleSize * endCycle
 
                     if (startCycle == endCycle) {
