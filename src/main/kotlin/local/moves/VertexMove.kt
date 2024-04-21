@@ -2,7 +2,6 @@ package org.example.local.moves
 
 import org.example.local.nextOf
 import org.example.local.prevOf
-import org.example.local.wrapIndex
 
 class VertexMove (
     dm: Array<IntArray>,
@@ -86,11 +85,11 @@ class VertexMove (
     }
 
     override fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>) {
-        for (si in -1..1) {
-            val sIdx = cycleStart.wrapIndex(startIndex + si)
-
-            for (ei in -1..1) {
-                val eIdx = cycleEnd.wrapIndex(endIndex + ei)
+        for (sIdx in cycleStart.indices) {
+            for (eIdx in cycleEnd.indices) {
+                if (sIdx == eIdx) {
+                    continue
+                }
 
                 // Intercycle vertex swap
                 val move = VertexMove(dm, cycleStart, cycleEnd, sIdx, eIdx)
