@@ -11,10 +11,16 @@ abstract class Move: Comparable<Move> {
     abstract fun checkValidity(): Validity
     abstract fun execute()
     abstract fun getSignature(): Pair<Long, Long>
-    abstract fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>)
+    abstract fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>, cycles: List<MutableList<Int>>)
 
     override fun compareTo(other: Move): Int {
-        return delta - other.delta
+        if (delta < other.delta) {
+            return -1
+        } else if (delta > other.delta) {
+            return 1
+        }
+
+        return 0
     }
 
 }

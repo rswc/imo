@@ -35,16 +35,16 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                 if (startCycle == endCycle) {
                     // Intracycle edge swap
 
-                    val move = EdgeMove(dm, cycles[startCycle], startIndex, endIndex, instance.dimension)
+                    val move = EdgeMove(dm, cycles[startCycle], cycles[startCycle xor 1], startIndex, endIndex, instance.dimension)
 
-                    if (move.delta < 0) {
+                    if (move.delta < 0 && !moveSet.contains(VertexMove.GetSignature(cycles[startCycle], cycles[endCycle], startIndex, endIndex))) {
                         LM.add(move)
                         moveSet.add(move.getSignature())
                     }
 
                     val iMove = move.inverted(dm, startIndex, endIndex)
 
-                    if (iMove.delta < 0) {
+                    if (iMove.delta < 0 && !moveSet.contains(VertexMove.GetSignature(cycles[startCycle], cycles[endCycle], startIndex, endIndex))) {
                         LM.add(iMove)
                         moveSet.add(iMove.getSignature())
                     }
@@ -52,9 +52,9 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                 } else {
                     // Intercycle vertex swap
 
-                    val move = VertexMove(dm, cycles[startCycle], cycles[endCycle], startIndex, endIndex)
+                    val move = VertexMove(dm, cycles[startCycle], cycles[endCycle], startIndex, endIndex, instance.dimension)
 
-                    if (move.delta < 0) {
+                    if (move.delta < 0 && !moveSet.contains(VertexMove.GetSignature(cycles[startCycle], cycles[endCycle], startIndex, endIndex))) {
                         LM.add(move)
                         moveSet.add(move.getSignature())
                     }
@@ -77,12 +77,14 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                     }
                     Move.Validity.INVERTED -> {}
                     Move.Validity.VALID -> {
-                        move.execute()
-                        move.addNextMoves(dm, LM, moveSet)
-                        LM.removeAt(i)
-                        moveSet.remove(move.getSignature())
-                        executed = true
-                        break
+                        if (move.delta < 0) {
+                            move.execute()
+                            move.addNextMoves(dm, LM, moveSet, cycles)
+                            LM.removeAt(i)
+                            moveSet.remove(move.getSignature())
+                            executed = true
+                            break
+                        }
                     }
                 }
             }
@@ -93,7 +95,7 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
     }
 
     override fun getDisplayName(): String {
-        return "Memeo"
+        return "Memo"
     }
 
 }
