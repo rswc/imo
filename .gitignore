@@ -6,6 +6,7 @@ build/
 
 *.dot
 tspResult.txt
+img/
 
 ### IntelliJ IDEA ###
 .idea/workspace.xml
