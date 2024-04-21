@@ -7,3 +7,7 @@ fun <T> MutableList<T>.nextOf(index: Int): T {
 fun <T> MutableList<T>.prevOf(index: Int): T {
     return this[(index - 1).mod(this.size)]
 }
+
+fun <T> MutableList<T>.wrapIndex(index: Int): Int {
+    return index.mod(this.size)
+}
