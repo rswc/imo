@@ -82,4 +82,8 @@ class CandidateMove(
         throw Exception("Signature of candidate move requested!")
     }
 
+    override fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>) {
+        throw Exception("Next move of candidate move requested!")
+    }
+
 }

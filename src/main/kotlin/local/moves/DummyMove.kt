@@ -1,7 +1,5 @@
 package org.example.local.moves
 
-import org.example.local.moves.Move
-
 class DummyMove: Move() {
 
     override val delta: Int = Int.MAX_VALUE
@@ -16,5 +14,9 @@ class DummyMove: Move() {
 
     override fun getSignature(): Pair<Long, Long> {
         throw Exception("Dummy move signature requested!")
+    }
+
+    override fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>) {
+        throw Exception("Next move of dummy move requested!")
     }
 }

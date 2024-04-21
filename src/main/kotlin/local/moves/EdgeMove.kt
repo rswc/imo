@@ -98,6 +98,24 @@ class EdgeMove(
         return Pair((startNode.toLong() shl 32) + startPrev.toLong(), (endNode.toLong() shl 32) + endNext.toLong())
     }
 
+    override fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>) {
+        for (sIndex in cycle.indices) {
+            for (eIndex in cycle.indices) {
+                if (sIndex == eIndex) {
+                    continue
+                }
+
+                // Intracycle edge swap
+                val move = EdgeMove(dm, cycle, startIndex, endIndex, dimension)
+
+                if (move.delta < 0 && !moveSet.contains(VertexMove.GetSignature(cycle, cycle, startIndex, endIndex))) {
+                    LM.add(move)
+                    moveSet.add(move.getSignature())
+                }
+            }
+        }
+    }
+
     fun inverted(dm: Array<IntArray>, si: Int, ei: Int): EdgeMove {
         //TODO: how ?????
         return EdgeMove(
@@ -109,6 +127,16 @@ class EdgeMove(
             cycle[ei],
             cycle.prevOf(ei),
         )
+    }
+
+    companion object {
+        fun GetSignature(cycle: MutableList<Int>, startIndex: Int, endIndex: Int): Pair<Long, Long> {
+            val sP = cycle.prevOf(startIndex).toLong()
+            val sN = cycle[startIndex].toLong()
+            val eN = cycle[endIndex].toLong()
+            val eX =  cycle.nextOf(endIndex).toLong()
+            return Pair((sN shl 32) + sP, (eN shl 32) + eX)
+        }
     }
 
     private fun startDir(startIndex: Int, startPrev: Int, cycle: MutableList<Int>): Validity {

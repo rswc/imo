@@ -11,6 +11,7 @@ abstract class Move: Comparable<Move> {
     abstract fun checkValidity(): Validity
     abstract fun execute()
     abstract fun getSignature(): Pair<Long, Long>
+    abstract fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>)
 
     override fun compareTo(other: Move): Int {
         return delta - other.delta

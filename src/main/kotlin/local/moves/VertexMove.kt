@@ -2,6 +2,7 @@ package org.example.local.moves
 
 import org.example.local.nextOf
 import org.example.local.prevOf
+import org.example.local.wrapIndex
 
 class VertexMove (
     dm: Array<IntArray>,
@@ -82,6 +83,34 @@ class VertexMove (
 
     override fun getSignature(): Pair<Long, Long> {
         return Pair((startNode.toLong() shl 32) + startPrev.toLong(), (endNode.toLong() shl 32) + endNext.toLong())
+    }
+
+    override fun addNextMoves(dm: Array<IntArray>, LM: MutableList<Move>, moveSet: MutableSet<Pair<Long, Long>>) {
+        for (si in -1..1) {
+            val sIdx = cycleStart.wrapIndex(startIndex + si)
+
+            for (ei in -1..1) {
+                val eIdx = cycleEnd.wrapIndex(endIndex + ei)
+
+                // Intercycle vertex swap
+                val move = VertexMove(dm, cycleStart, cycleEnd, sIdx, eIdx)
+
+                if (move.delta < 0 && !moveSet.contains(GetSignature(cycleStart, cycleEnd, sIdx, eIdx))) {
+                    LM.add(move)
+                    moveSet.add(move.getSignature())
+                }
+            }
+        }
+    }
+
+    companion object {
+        fun GetSignature(cycleStart: MutableList<Int>, cycleEnd: MutableList<Int>, startIndex: Int, endIndex: Int): Pair<Long, Long> {
+            val sP = cycleStart.prevOf(startIndex).toLong()
+            val sN = cycleStart[startIndex].toLong()
+            val eN = cycleEnd[endIndex].toLong()
+            val eX =  cycleEnd.nextOf(endIndex).toLong()
+            return Pair((sN shl 32) + sP, (eN shl 32) + eX)
+        }
     }
 
     override fun toString(): String {
