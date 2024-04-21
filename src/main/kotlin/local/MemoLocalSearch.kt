@@ -24,7 +24,6 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
             val startCycle = (start >= firstCycleSize).compareTo(false)
             val startIndex = start - firstCycleSize * startCycle
 
-
             for (end in 0 until instance.dimension) {
                 if (start == end) {
                     continue
@@ -32,10 +31,6 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
 
                 val endCycle = (end >= firstCycleSize).compareTo(false)
                 val endIndex = end - firstCycleSize * endCycle
-
-                if (moveSet.contains(VertexMove.GetSignature(cycles[startCycle], cycles[endCycle], startIndex, endIndex))) {
-                    continue
-                }
 
                 if (startCycle == endCycle) {
                     // Intracycle edge swap
@@ -45,6 +40,13 @@ class MemoLocalSearch(private val presolver: ISolver<TSProblem>): ISolver<TSProb
                     if (move.delta < 0) {
                         LM.add(move)
                         moveSet.add(move.getSignature())
+                    }
+
+                    val iMove = move.inverted(dm, startIndex, endIndex)
+
+                    if (iMove.delta < 0) {
+                        LM.add(iMove)
+                        moveSet.add(iMove.getSignature())
                     }
 
                 } else {

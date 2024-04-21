@@ -117,12 +117,11 @@ class EdgeMove(
     }
 
     fun inverted(dm: Array<IntArray>, si: Int, ei: Int): EdgeMove {
-        //TODO: how ?????
         return EdgeMove(
             dm,
             dimension,
             cycle,
-            cycle.nextOf(si),
+            cycle.prevOf(si),
             cycle[si],
             cycle[ei],
             cycle.prevOf(ei),
