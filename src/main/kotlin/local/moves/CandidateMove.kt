@@ -51,10 +51,10 @@ class CandidateMove(
         val sCC = cycleStart[startCenter]
         val sCN = cycleStart.nextOf(startCenter)
         val eCP = cycleEnd.prevOf(endCenter)
-        val eCC = cycleEnd[startCenter]
+        val eCC = cycleEnd[endCenter]
         val eCN = cycleEnd.nextOf(endCenter)
 
-        return dm[sCP][eCC] +
+        var d = dm[sCP][eCC] +
                 dm[eCC][sCN] -
                 dm[sCP][sCC] -
                 dm[sCC][sCN] +
@@ -62,6 +62,16 @@ class CandidateMove(
                 dm[sCC][eCN] -
                 dm[eCP][eCC] -
                 dm[eCC][eCN]
+
+        // When the two nodes are next to each other, they share an edge
+        if (sCC == eCN) {
+            d += dm[sCC][sCP] + dm[sCC][eCC]
+        }
+        if (eCC == sCN) {
+            d += dm[eCC][eCP] + dm[eCC][sCC]
+        }
+
+        return d
     }
 
     override fun checkValidity(): Validity {

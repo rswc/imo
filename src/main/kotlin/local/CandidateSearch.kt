@@ -48,7 +48,7 @@ class CandidateSearch(private val presolver: ISolver<TSProblem>, private val nei
                         endCycle
                     )
 
-                    if (move < bestMove) {
+                    if (move.delta < bestMove.delta) {
                         bestMove = move
                     }
                 }
